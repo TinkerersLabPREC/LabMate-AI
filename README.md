@@ -38,18 +38,34 @@ Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**!
 ### Installation & Setup
 1. **Clone the Repository**
    ```sh
-   git clone https://github.com/tinkererslab/ai-lab-assistant.git
-   cd ai-lab-assistant
+   git clone https://github.com/tinkererslab/LabMate-AI.git
+   cd LabMate-AI
    ```
 2. **Set Up the Database**
    - Install PostgreSQL and enable `pgvector` extension.
    - Create a new database and update `.env` with database credentials.
 3. **Run the Application**
    ```sh
-   ./mvnw spring-boot:run
+   ./LabMate-AI/mvnw spring-boot:run
    ```
-4. **Access the API**
-   - API runs on `http://localhost:8080/api/`
+   or 
+
+   ```sh
+   docker compose up
+   ```
+4. **Add PDF file for context**
+   ```sh
+   cp ~/input-context.pdf /opt/docs/.
+   ```
+   (you have have multiple pdf files at /opt/docs)
+5. **Access the API**
+   - API runs on `http://localhost:8080/api/v1/llm/ask`
+   - add request body as 
+   ```sh
+   {
+      "query": "you query"
+   }
+   ```
 
 ## 📌 Future Enhancements
 - **Fine-tuning the LLM** for improved contextual accuracy.
@@ -64,3 +80,12 @@ This project is open-source and available under the **MIT License**.
 
 ---
 🚀 Built with passion at **Tinkerers' Lab, PREC Loni**. Let's innovate together! 🔥
+
+## Contact
+
+For any inquiries or feedback, please reach out to us at:
+- **Email**: tl@pravaraengg.org.in or 
+- **Maintainer** : [email](kaustubhk375@gmail.com) , [github](https://github.com/wigiwee)
+- **GitHub**: [Tinkerer's Lab PREC](https://github.com/TinkerersLabPREC)
+
+---
