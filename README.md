@@ -78,6 +78,9 @@ Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**!
 - **Integration with Chat UI** for a seamless user experience.
 - **Multi-Document Support** to process various academic file formats.
 
+## 🔄 Customizing for Personal Use
+This AI Lab Assistant can be used as a **personal AI assistant** for any purpose! Simply replace the contents of the input PDF files in the `data/` directory with your own documents. The system will process and retrieve information based on your specific files, making it a versatile tool for various applications.
+
 ## 🤝 Contributing
 We welcome contributions from the community! Feel free to fork this repository, submit pull requests, or open issues.
 
