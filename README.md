@@ -1,4 +1,4 @@
-# AI Lab Assistant - Tinkerers' Lab, PREC Loni
+# LabMate-AI - Tinkerers' Lab, PREC Loni
 
 Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**! 🚀 This project is a **Spring Boot-based RAG (Retrieval-Augmented Generation) LLM model**, designed to assist students and researchers by providing contextual responses based on academic materials, research papers, and lab resources.
 
@@ -57,8 +57,14 @@ Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**!
    ```sh
    cp ~/input-context.pdf /opt/docs/.
    ```
+   or
+   ```sh
+   cp data/input.zip /opt/docs;
+   cd /opt/docs;
+   unzip input.zip
+   ```
    (you have have multiple pdf files at /opt/docs)
-5. **Access the API**
+6. **Access the API**
    - API runs on `http://localhost:8080/api/v1/llm/ask`
    - add request body as 
    ```sh
