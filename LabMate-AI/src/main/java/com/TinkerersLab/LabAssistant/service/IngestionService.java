@@ -11,8 +11,6 @@ import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import com.TinkerersLab.LabAssistant.config.ApplicationConstants;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -25,8 +23,8 @@ public class IngestionService {
         this.vectorStore = vectorStore;
     }
 
-    public void ingestAll() {
-        File dir = new File(ApplicationConstants.DEFAULT_RESOURCE_PATH);
+    public void ingestAll(String path) {
+        File dir = new File(path);
         File[] files = dir.listFiles();
         System.out.println("files : " + files.length);
 

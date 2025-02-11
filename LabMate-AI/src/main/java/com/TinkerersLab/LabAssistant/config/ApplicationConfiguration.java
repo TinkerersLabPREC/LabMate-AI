@@ -19,8 +19,10 @@ public class ApplicationConfiguration {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            ingestionService.ingestAll();
-            log.info("All files ingested from ", ApplicationConstants.DEFAULT_RESOURCE_PATH);
+            for (String path : ApplicationConstants.DEFAULT_RESOURCE_PATH) {
+                ingestionService.ingestAll(path);
+                log.info("All files ingested from " + path);
+            }
         };
     }
 
