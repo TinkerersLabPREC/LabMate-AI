@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.TinkerersLab.LabAssistant.model.LLMRequest;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
 @Service
 @Slf4j
@@ -39,6 +40,24 @@ public class LLMService {
         return chatClient
                 .prompt(prompt)
                 .call()
+                .content();
+    }
+
+    public Flux<String> askAndStream(String query) {
+
+        String context = """
+                Act like a Lab Assistant model
+                QUESTION : {query}
+                """;
+
+        PromptTemplate template = new PromptTemplate(context);
+
+        Prompt prompt = template.create(Map.of("query", query));
+
+        return chatClient
+                .prompt(prompt)
+                .user(query)
+                .stream()
                 .content();
     }
 }
