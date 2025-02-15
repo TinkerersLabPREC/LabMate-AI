@@ -56,6 +56,7 @@ public class LLMService {
 
         return chatClient
                 .prompt(prompt)
+                .user(query)
                 .stream()
                 .content();
     }

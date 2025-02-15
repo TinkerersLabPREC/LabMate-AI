@@ -58,7 +58,7 @@
 
             // Fetch streaming data from the server
             try {
-                const response = await fetchStreamWithRetry('/ask?message=' + encodeURIComponent(message));
+                const response = await fetchStreamWithRetry('/api/v1/llm/askAndStream?query=' + encodeURIComponent(message));
                 const reader = response.body.getReader();
                 let botMessageElement = addMessageToChat('Bot', '');
                 let contentElement = botMessageElement.querySelector('.message-content');
