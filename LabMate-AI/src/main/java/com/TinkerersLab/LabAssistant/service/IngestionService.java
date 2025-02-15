@@ -11,24 +11,30 @@ import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import com.TinkerersLab.LabAssistant.config.ApplicationConstants;
+import com.TinkerersLab.LabAssistant.util.Utils;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class IngestionService {
 
     private final VectorStore vectorStore;
 
-    public IngestionService(VectorStore vectorStore) {
-        this.vectorStore = vectorStore;
-    }
+    private final Utils utils;
 
     public void ingestAll(String path) {
         File dir = new File(path);
         File[] files = dir.listFiles();
-        System.out.println("files : " + files.length);
 
         for (File file : files) {
+            String fileHash = ApplicationConstants.INGESTION_RECORD.get(file.getName());
+            if (fileHash != null) {
+                continue;
+            }
             log.info("embedding text to vector " + file.getName());
             Resource resource;
             try {
@@ -41,7 +47,10 @@ public class IngestionService {
             var pdfReader = new PagePdfDocumentReader(resource);
             TextSplitter textSplitter = new TokenTextSplitter();
             vectorStore.accept(textSplitter.apply(pdfReader.get()));
+
+            ApplicationConstants.INGESTION_RECORD.put(file.getName(), utils.getFileHash(file));
             log.info("Vector store loaded with " + file.getName());
         }
     }
+
 }
