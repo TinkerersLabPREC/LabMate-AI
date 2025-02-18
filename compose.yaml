@@ -1,12 +1,13 @@
 services:
-  ollama:
-    image: 'ollama/ollama:latest'
-    ports:
-      - '11434'
-    volumes:
-      - 'ollama_data:/root/.ollama'
-    # networks:
-    #   - Lab_network
+  # uncomment this in case you want to run ollama inside a docker container
+  # ollama:
+  #   image: 'ollama/ollama:latest'
+  #   ports:
+  #     - '11434:11434'
+  #   expose:
+  #     - '11434'
+  #   volumes:
+  #     - 'ollama_data:/root/.ollama'
 
   pgvector:
     image: 'pgvector/pgvector:pg16'
@@ -20,11 +21,3 @@ services:
       - '5432:5432'
     expose:
       - '5432'
-  #   networks:
-  #     - Lab_network
-
-  # networks:
-  #   Lab_network:
-  #     driver: bridge
-  volumes:
-    ollama_data:
