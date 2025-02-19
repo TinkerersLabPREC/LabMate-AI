@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.TinkerersLab.LabAssistant.config.ApplicationConstants;
 import com.TinkerersLab.LabAssistant.util.Utils;
 
-import ch.qos.logback.core.subst.Token;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,8 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class IngestionService {
 
     private final VectorStore vectorStore;
-
-    private final Utils utils;
 
     public void ingestAll(String path) {
         File dir = new File(path);
@@ -67,7 +64,7 @@ public class IngestionService {
                 }
             }
 
-            ApplicationConstants.INGESTION_RECORD.put(file.getName(), utils.getFileHash(file));
+            ApplicationConstants.INGESTION_RECORD.put(file.getName(), Utils.getFileHash(file));
             log.info("Vector store loaded with " + file.getName());
         }
     }
