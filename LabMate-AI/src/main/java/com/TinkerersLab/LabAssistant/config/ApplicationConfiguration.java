@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.TinkerersLab.LabAssistant.service.IngestionService;
+import com.TinkerersLab.LabAssistant.util.Utils;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,9 @@ public class ApplicationConfiguration {
             oOut.close();
             log.info("ApplicationConstants.INGESTION_RECORD object has been serialized and written to "
                     + ApplicationConstants.DEFAULT_INGESTION_RECORD_PATH);
+
+            ApplicationConstants.CENSORED_WORDS = Utils.getCensoredWords();
+            log.info("Censored Words successfully loaded from " + ApplicationConstants.DEFAULT_CENSORED_WORDS_PATH);
         };
     }
 

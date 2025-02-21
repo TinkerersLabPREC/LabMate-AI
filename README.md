@@ -1,4 +1,4 @@
-# LabMate-AI - Tinkerers' Lab, PREC Loni
+# LabMate-AI - A AI Assistant for Tinkerers' Lab, PREC Loni
 
 Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**! 🚀 This project is a **Spring Boot-based RAG (Retrieval-Augmented Generation) LLM model**, designed to assist students and researchers by providing contextual responses based on academic materials, research papers, and lab resources.
 
@@ -65,13 +65,15 @@ Welcome to the **AI Lab Assistant** repository of **Tinkerers' Lab, PREC Loni**!
    ```
    (you have have multiple pdf files at /opt/docs)
 6. **Access the API**
-   - API runs on `http://localhost:8080/api/v1/llm/ask`
+   - API runs on `http://localhost:8080/api/v1/llm/ask` and `http://localhost:8080/api/v1/llm/askAndStream?query=this+is+my+query`
    - add request body as 
    ```sh
    {
       "query": "you query"
    }
    ```
+7. **Access the UI**
+   - Visit http://localhost:8080 on you web browser
 
 ## 📌 Future Enhancements
 - **Fine-tuning the LLM** for improved contextual accuracy.

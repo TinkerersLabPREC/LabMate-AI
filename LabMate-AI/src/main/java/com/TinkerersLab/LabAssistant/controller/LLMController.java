@@ -32,8 +32,8 @@ public class LLMController {
 
     @GetMapping("/askAndStream")
     public Flux<String> askAndStream(@RequestParam String query) {
+
         log.info("Received Get /askAndStream with prompt :" + query);
         return llmService.askAndStream(query);
     }
-
 }
