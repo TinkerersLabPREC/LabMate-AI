@@ -45,6 +45,37 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j</artifactId>
+			<version>1.0.0-beta1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-document-parser-apache-poi</artifactId>
+			<version>1.0.0-beta1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j </groupId>
+			<artifactId>langchain4j-ollama</artifactId>
+			<version>1.0.0-beta1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j </groupId>
+			<artifactId>langchain4j-open-ai</artifactId>
+			<version>1.0.0-beta1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-pgvector</artifactId>
+			<version>1.0.0-beta1</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
