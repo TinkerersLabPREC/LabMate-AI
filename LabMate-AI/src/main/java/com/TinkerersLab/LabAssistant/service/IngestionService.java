@@ -1,72 +1,53 @@
 package com.TinkerersLab.LabAssistant.service;
 
+import static dev.langchain4j.data.document.loader.FileSystemDocumentLoader.loadDocument;
+
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.ai.document.Document;
-import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
-import org.springframework.ai.transformer.splitter.TextSplitter;
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.core.io.FileUrlResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import com.TinkerersLab.LabAssistant.config.ApplicationConstants;
-import com.TinkerersLab.LabAssistant.util.Utils;
+import com.TinkerersLab.LabAssistant.exception.IngestionFailedException;
 
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class IngestionService {
 
-    private final VectorStore vectorStore;
+    EmbeddingModel embeddingModel;
 
-    public void ingestAll(String path) {
-        File dir = new File(path);
-        File[] files = dir.listFiles();
+    EmbeddingStore<TextSegment> embeddingStore;
+
+    public void ingest(String path) throws IngestionFailedException {
+
+        File[] files = (new File(path)).listFiles();
+        List<Document> docs = new ArrayList<>();
 
         for (File file : files) {
-            String fileHash = ApplicationConstants.INGESTION_RECORD.get(file.getName());
-            if (fileHash != null) {
-                continue;
-            }
-            log.info("embedding text to vector " + file.getName());
-            Resource resource;
-            try {
-                resource = new FileUrlResource(file.getAbsolutePath());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                continue;
-            }
-
-            if (file.getName().toLowerCase().endsWith(".pdf")) {
-
-                var pdfReader = new PagePdfDocumentReader(resource);
-                TextSplitter textSplitter = new TokenTextSplitter();
-                vectorStore.accept(textSplitter.apply(pdfReader.get()));
-
-            } else if (file.getName().toLowerCase().endsWith(".txt")) {
-                try {
-                    String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-                    TextSplitter textSplitter = new TokenTextSplitter();
-
-                    vectorStore.accept(textSplitter.apply(List.of(new Document(content))));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            ApplicationConstants.INGESTION_RECORD.put(file.getName(), Utils.getFileHash(file));
-            log.info("Vector store loaded with " + file.getName());
+            docs.add(loadDocument(file.getAbsolutePath()));
         }
+        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+                .documentSplitter(DocumentSplitters.recursive(400, 50))
+                .embeddingModel(embeddingModel)
+                .embeddingStore(embeddingStore)
+                .build();
+
+        ingestor.ingest(docs);
+
+        log.info("ingested all documents at " + path);
     }
 
 }

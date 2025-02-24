@@ -1,0 +1,79 @@
+{
+    "properties": [
+        {
+            "name": "labmate.llm-provider.baseUrl",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.baseUrl'"
+        },
+        {
+            "name": "labmate.llm-provider.embeddingModel",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.embeddingModel'"
+        },
+        {
+            "name": "labmate.llm-provider.chatModel",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.chatModel'"
+        },
+        {
+            "name": "labmate.llm-provider.logRequests",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.logRequests'"
+        },
+        {
+            "name": "labmate.llm-provider.logResponses",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.logResponses'"
+        },
+        {
+            "name": "labmate.llm-provider.temperature",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.llm-provider.temperature'"
+        },
+        {
+            "name": "labmate.vectorStore.host",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.host'"
+        },
+        {
+            "name": "labmate.vectorStore.port",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.port'"
+        },
+        {
+            "name": "labmate.vectorStore.user",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.user'"
+        },
+        {
+            "name": "labmate.vectorStore.password",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.password'"
+        },
+        {
+            "name": "labmate.vectorStore.database",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.database'"
+        },
+        {
+            "name": "labmate.vectorStore.createTable",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.createTable'"
+        },
+        {
+            "name": "labmate.vectorStore.dropFirstTable",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.dropFirstTable'"
+        },
+        {
+            "name": "labmate.vectorStore.table",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.table'"
+        },
+        {
+            "name": "labmate.vectorStore.indexListSize",
+            "type": "java.lang.String",
+            "description": "A description for 'labmate.vectorStore.indexListSize'"
+        }
+    ]
+}

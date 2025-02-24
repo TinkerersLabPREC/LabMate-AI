@@ -1,69 +1,105 @@
 package com.TinkerersLab.LabAssistant.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
+import java.util.List;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.TinkerersLab.LabAssistant.service.IngestionService;
-import com.TinkerersLab.LabAssistant.util.Utils;
+import com.TinkerersLab.LabAssistant.config.properties.LLMProviderProperties;
+import com.TinkerersLab.LabAssistant.config.properties.VectorStoreProperties;
+import com.TinkerersLab.LabAssistant.model.llm.RagAiAssistant;
 
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
+import dev.langchain4j.rag.DefaultRetrievalAugmentor;
+import dev.langchain4j.rag.RetrievalAugmentor;
+import dev.langchain4j.rag.content.injector.DefaultContentInjector;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.rag.query.transformer.ExpandingQueryTransformer;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @AllArgsConstructor
-@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ApplicationConfiguration {
 
-    private final IngestionService ingestionService;
+    LLMProviderProperties llmProviderProperties;
+
+    VectorStoreProperties vectorStoreProperties;
 
     @Bean
-    public CommandLineRunner commandLineRunner() {
-        return args -> {
-            File ingestionRecordFile = new File(ApplicationConstants.DEFAULT_INGESTION_RECORD_PATH);
-            if (ingestionRecordFile.createNewFile()) {
-                // file dosen't exist new file created
-                log.info("Ingestion Record File created at " + ApplicationConstants.DEFAULT_INGESTION_RECORD_PATH);
-                ApplicationConstants.INGESTION_RECORD = new HashMap<>();
-            } else {
-                // file already exists, existing file loaded to
-                // ApplicationConstants.INGESTION_RECORD
-                log.info("Ingestion file loaded to ApplicationConstatns.INGESTION_RECORD");
+    EmbeddingModel embeddingModel() {
 
-                ObjectInputStream oIn = new ObjectInputStream(new FileInputStream(ingestionRecordFile));
-
-                Object obj = oIn.readObject();
-                oIn.close();
-                if (obj instanceof HashMap<?, ?>) {
-                    ApplicationConstants.INGESTION_RECORD = (HashMap<String, String>) obj;
-                } else {
-                    throw new ClassCastException("Expected a HashMap<String, String> but found " + obj.getClass()
-                            + "at " + ApplicationConstants.DEFAULT_INGESTION_RECORD_PATH);
-                }
-            }
-
-            for (String path : ApplicationConstants.DEFAULT_RESOURCE_PATH) {
-                ingestionService.ingestAll(path);
-                log.info("All files ingested from " + path);
-            }
-
-            // writing the ApplicationConstants.INGESTION_RECORD to file
-            ObjectOutputStream oOut = new ObjectOutputStream(new FileOutputStream(ingestionRecordFile));
-            oOut.writeObject(ApplicationConstants.INGESTION_RECORD);
-            oOut.close();
-            log.info("ApplicationConstants.INGESTION_RECORD object has been serialized and written to "
-                    + ApplicationConstants.DEFAULT_INGESTION_RECORD_PATH);
-
-            ApplicationConstants.CENSORED_WORDS = Utils.getCensoredWords();
-            log.info("Censored Words successfully loaded from " + ApplicationConstants.DEFAULT_CENSORED_WORDS_PATH);
-        };
+        return OllamaEmbeddingModel.builder()
+                .baseUrl(llmProviderProperties.getBaseUrl())
+                .modelName(llmProviderProperties.getEmbeddingModel())
+                .build();
     }
 
+    @Bean
+    EmbeddingStore<TextSegment> embeddingStore() {
+        return PgVectorEmbeddingStore.builder()
+                .host(vectorStoreProperties.getHost())
+                .port(vectorStoreProperties.getPort())
+                .user(vectorStoreProperties.getUser())
+                .password(vectorStoreProperties.getPassword())
+                .database(vectorStoreProperties.getDatabase())
+                .table(vectorStoreProperties.getTable())
+                .createTable(vectorStoreProperties.isCreateTable())
+                .dimension(embeddingModel().dimension())
+                .useIndex(true)
+                .indexListSize(vectorStoreProperties.getIndexListSize())
+                .dropTableFirst(true)
+                .build();
+
+    }
+
+    @Bean
+    RagAiAssistant ragAiAssistant() {
+        EmbeddingStoreContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore())
+                .embeddingModel(embeddingModel())
+                .minScore(0.7)
+                .maxResults(15)
+                .build();
+
+        DefaultContentInjector contentInjector = DefaultContentInjector.builder()
+                .metadataKeysToInclude(List.of("file_name", "index"))
+                .build();
+
+        RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
+                .contentRetriever(contentRetriever)
+                .contentInjector(contentInjector)
+                .contentAggregator(null)
+                .queryTransformer(new ExpandingQueryTransformer(chatLanguageModel()))
+                .build();
+
+        return AiServices.builder(RagAiAssistant.class)
+                .chatLanguageModel(chatLanguageModel())
+                .retrievalAugmentor(retrievalAugmentor)
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+                .build();
+    }
+
+    @Bean
+    ChatLanguageModel chatLanguageModel() {
+        return OllamaChatModel.builder()
+                .baseUrl(llmProviderProperties.getBaseUrl())
+                .modelName(llmProviderProperties.getChatModel())
+                .temperature(llmProviderProperties.getTemperature())
+                .logRequests(llmProviderProperties.isLogRequests())
+                .logResponses(llmProviderProperties.isLogResponses())
+                .build();
+    }
 }
