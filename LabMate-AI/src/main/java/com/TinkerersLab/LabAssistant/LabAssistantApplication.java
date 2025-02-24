@@ -4,7 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@EnableConfigurationProperties
+import com.TinkerersLab.LabAssistant.config.properties.LLMProviderProperties;
+import com.TinkerersLab.LabAssistant.config.properties.VectorStoreProperties;
+
+@EnableConfigurationProperties({ LLMProviderProperties.class, VectorStoreProperties.class })
 @SpringBootApplication
 public class LabAssistantApplication {
 

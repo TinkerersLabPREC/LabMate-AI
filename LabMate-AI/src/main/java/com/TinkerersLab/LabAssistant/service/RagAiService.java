@@ -6,7 +6,9 @@ import com.TinkerersLab.LabAssistant.model.ChatRequest;
 import com.TinkerersLab.LabAssistant.model.llm.RagAiAssistant;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class RagAiService {
